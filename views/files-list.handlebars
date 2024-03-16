@@ -1,0 +1,24 @@
+<h1>{{title}}</h1>
+<ul>
+  {{#each items as |item|}}
+    {{#if item.dir}}
+      <li>
+        <a href="/browse{{item.path}}?layout=list">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+            <path d="M1,2h4v2H15V14H1V2Z" />
+          </svg>
+          {{~item.name~}}
+        </a>
+      </li>
+    {{else}}
+      <li>
+        <a href="/view{{item.path}}">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <path d="M3,4L6,1V4H3V15H13V1H6Z" />
+          </svg>
+          {{~item.name~}}
+        </a>
+      </li>
+    {{/if}}
+  {{/each}}
+</ul>

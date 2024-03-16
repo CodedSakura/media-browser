@@ -1,0 +1,11 @@
+services:
+  media-browser:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./media:/media:ro
+    environment:
+      MEDIA_DIR: /media
+      PORT: 80
+    ports:
+      - 8080:80

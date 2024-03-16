@@ -1,0 +1,32 @@
+{
+  "name": "media-browser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "packageManager": "yarn@4.1.1",
+  "dependencies": {
+    "connect-livereload": "^0.6.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "express-handlebars": "^7.1.2",
+    "helmet": "^7.1.0",
+    "livereload": "^0.9.3",
+    "nodemon": "^3.1.0",
+    "qs": "^6.12.0",
+    "sass": "^1.72.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/connect-livereload": "^0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/livereload": "^0",
+    "@types/node": "^20.11.28",
+    "@types/qs": "^6.9.12"
+  },
+  "scripts": {
+    "start": "node -r ts-node/register --trace-warnings --unhandled-rejections=strict src/index.ts",
+    "dev": "nodemon src/index.ts -e handlebars,ts,scss,svg,css,js,sass"
+  }
+}
