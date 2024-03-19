@@ -37,6 +37,7 @@ function mimeTypeToFileType(mime: string): "image" | "video" | "text" | "unknown
 export default function (mediaDir: string, app: Express) {
   app.get(path.join(basePath, "/view/*"), async (req: Request, res: Response) => {
     const viewPath = req.params[0];
+    const { style = "bidirectional" } = req.query;
 
     const fullPath = path.join(mediaDir, viewPath);
 
@@ -60,7 +61,7 @@ export default function (mediaDir: string, app: Express) {
     res.render(`view`, {
       title: viewPath,
       type: mimeTypeToFileType(mime),
-      base, next, prev, basePath,
+      base, next, prev, basePath, style,
     });
   });
 }
