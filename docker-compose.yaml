@@ -6,6 +6,7 @@ services:
       - ./media:/media:ro
     environment:
       MEDIA_DIR: /media
-      PORT: 80
+      PORT: 8080
+      BASE_PATH: /qwerty/
     ports:
-      - 8080:80
+      - 8080:8080

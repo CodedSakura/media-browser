@@ -1,18 +1,18 @@
 <div class="content">
   {{#if (eq type "video")}}
-    <video controls autoplay loop src="/media/{{title}}"></video>
+    <video controls autoplay loop src="{{basePath}}media/{{title}}"></video>
   {{else if (eq type "image")}}
-    <img src="/media/{{title}}" alt="{{title}}" />
+    <img src="{{basePath}}media/{{title}}" alt="{{title}}" />
   {{else if (eq type "text")}}
     <pre>{{getFileContents title}}</pre>
   {{else}}
-    <a href="{{title}}">Download {{title}}</a>
+    <a href="{{basePath}}media/{{title}}">Download {{title}}</a>
   {{/if}}
 </div>
 <div class="nav-overlay">
   <h2>{{title}}</h2>
-  <a href="/view{{next}}" title="next"></a>
-  <a href="/view{{next}}" title="next"></a>
-  <a href="/view{{prev}}" title="previous"></a>
-  <a href="/browse{{base}}" title="back"></a>
+  <a href="{{basePath}}view{{next}}" title="next"></a>
+  <a href="{{basePath}}view{{next}}" title="next"></a>
+  <a href="{{basePath}}view{{prev}}" title="previous"></a>
+  <a href="{{basePath}}browse{{base}}" title="back"></a>
 </div>

@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { lstat } from "node:fs/promises";
 import path from "node:path";
 import { getFileList } from "./files";
+import { basePath } from "./index";
 
 /**
  * Get the file mime type from path. No extension required.
@@ -34,7 +35,7 @@ function mimeTypeToFileType(mime: string): "image" | "video" | "text" | "unknown
 }
 
 export default function (mediaDir: string, app: Express) {
-  app.get("/view/*", async (req: Request, res: Response) => {
+  app.get(path.join(basePath, "/view/*"), async (req: Request, res: Response) => {
     const viewPath = req.params[0];
 
     const fullPath = path.join(mediaDir, viewPath);
@@ -59,7 +60,7 @@ export default function (mediaDir: string, app: Express) {
     res.render(`view`, {
       title: viewPath,
       type: mimeTypeToFileType(mime),
-      base, next, prev,
+      base, next, prev, basePath,
     });
   });
 }

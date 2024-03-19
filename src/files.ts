@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { existsSync } from "node:fs";
 import { lstat, readdir } from "node:fs/promises";
 import path from "node:path";
+import { basePath } from "./index";
 
 export interface File {
   name: string,
@@ -22,10 +23,10 @@ export async function getFileList(fullPath: string, mediaDir: string): Promise<F
 }
 
 export default function (mediaDir: string, app: Express) {
-  app.get("/", (_req: Request, res: Response) => {
-    res.redirect("/browse/");
+  app.get(path.join(basePath, "/"), (_req: Request, res: Response) => {
+    res.redirect(path.join(basePath, "/browse/"));
   });
-  app.get("/browse/*?", async (req: Request, res: Response) => {
+  app.get(path.join(basePath, "/browse/*?"), async (req: Request, res: Response) => {
     const viewPath = req.params[0] ?? "/";
     const { layout = "list" } = req.query;
 
@@ -51,6 +52,6 @@ export default function (mediaDir: string, app: Express) {
       });
     }
 
-    res.render(`files-${layout}`, { title: viewPath, items });
+    res.render(`files-${layout}`, { title: viewPath, items, basePath });
   });
 }
