@@ -65,6 +65,11 @@ h1, h2 {
   > * {
     max-width: 100%;
   }
+
+  > a {
+    padding: .5em;
+    z-index: 20;
+  }
 }
 
 .nav-overlay {
@@ -82,28 +87,34 @@ h1, h2 {
     z-index: 1;
   }
 
-  :nth-child(2) { // ->
-    grid-column: 1 / 2;
+  .pos {
     grid-row: 1 / -1;
+    grid-column: 1 / -1;
     z-index: 10;
-  }
 
-  :nth-child(3) { // ->
-    grid-column: -1 / -2;
-    grid-row: 1 / -1;
-    z-index: 10;
-  }
+    &--top {
+      grid-row: 1 / 2;
+    }
 
-  :nth-child(4) { // <-
-    grid-column: 2 / -2;
-    grid-row: -1 / -2;
-    z-index: 10;
-  }
+    &--middle {
+      grid-row: 2 / -2;
+    }
 
-  :nth-child(5) { // ..
-    grid-column: 2 / -2;
-    grid-row: 1 / 2;
-    z-index: 10;
+    &--bottom {
+      grid-row: -1 / -2;
+    }
+
+    &--left {
+      grid-column: 1 / 2;
+    }
+
+    &--center {
+      grid-column: 2 / -2;
+    }
+
+    &--right {
+      grid-column: -1 / -2;
+    }
   }
 }
 
