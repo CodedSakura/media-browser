@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY . .
 
+RUN apk update && apk add --no-cache file
 RUN yarn
 
 EXPOSE 3000
