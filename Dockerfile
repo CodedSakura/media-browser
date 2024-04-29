@@ -8,5 +8,5 @@ COPY . .
 RUN apk update && apk add --no-cache file
 RUN yarn
 
-EXPOSE 3000
+EXPOSE 80
 ENTRYPOINT ["yarn", "start"]

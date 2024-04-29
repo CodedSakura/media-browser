@@ -68,7 +68,7 @@ app.use(path.join(basePath, "/"), express.static(path.resolve(__dirname, "../pub
 
 app.use(path.join(basePath, "/media"), express.static(mediaDir));
 
-const listener = app.listen(Number(process.env.PORT ?? 3000), () => {
+const listener = app.listen(Number(process.env.PORT ?? 80), () => {
   const address = listener.address()! as AddressInfo;
   console.log(`App started on ${address.port}, base path = '${basePath}'`);
 });
