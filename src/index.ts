@@ -8,10 +8,11 @@ import type { AddressInfo } from "node:net";
 import path from "node:path";
 import qs from "qs";
 import sass from "sass";
-import files from "./files";
+import browse from "./browse";
 import view from "./view";
 
-const mediaDir = path.resolve(__dirname, process.env.MEDIA_DIR ?? "../media/");
+export const mediaDir = path.resolve(__dirname, process.env.MEDIA_DIR ?? "../media/");
+export const thumbnailDir = path.resolve(__dirname, process.env.THUMB_DIR ?? "../thumbs/");
 export const basePath = ("/" + (process.env.BASE_PATH ?? "")
       .replace(/\/$/, "")
       .replace(/^\//, "") + "/").replace(/^\/\/$/, "/");
@@ -42,8 +43,8 @@ app.set("query parser", (str: string) => {
 
 app.use(connectLiveReload());
 
-files(mediaDir, app);
-view(mediaDir, app);
+browse(app);
+view(app);
 
 app.get(path.join(basePath, "*.css"), (req: Request, res: Response) => {
   const urlBase = path.dirname(path.relative(path.join(basePath, "/"), req.url));

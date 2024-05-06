@@ -66,6 +66,16 @@ h1, h2 {
     max-width: 100%;
   }
 
+  > img.fit-- {
+    &h {
+      max-width: 100%;
+    }
+
+    &w {
+      max-height: 100svh;
+    }
+  }
+
   > a {
     padding: .5em;
     z-index: 20;
@@ -77,6 +87,7 @@ h1, h2 {
   position: fixed;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   inset: 0 0 0 0;
+  pointer-events: none;
 
   :nth-child(1) { // nav
     grid-column: 1 / -1;
@@ -91,6 +102,7 @@ h1, h2 {
     grid-row: 1 / -1;
     grid-column: 1 / -1;
     z-index: 10;
+    pointer-events: auto;
 
     &--top {
       grid-row: 1 / 2;

@@ -1,28 +1,28 @@
 <div class="content">
   {{#if (eq type "video")}}
-    <video controls autoplay loop src="{{basePath}}media/{{title}}"></video>
+    <video controls autoplay loop src="{{basePath}}media/{{title}}?{{query}}"></video>
   {{else if (eq type "image")}}
-    <img src="{{basePath}}media/{{title}}" alt="{{title}}" />
+    <img src="{{basePath}}media/{{title}}?{{query}}" alt="{{title}}" class="fit--{{fit}}" />
   {{else if (eq type "text")}}
     <pre>{{getFileContents title}}</pre>
   {{else}}
-    <a href="{{basePath}}media/{{title}}">Download {{title}}</a>
+    <a href="{{basePath}}media/{{title}}?{{query}}">Download {{title}}</a>
   {{/if}}
 </div>
 <div class="nav-overlay">
   <h2>{{title}}</h2>
-  {{#if (eq style "bidirectional")}}
-    <a href="{{basePath}}view{{next}}" title="next" class="pos pos--left"></a>
-    <a href="{{basePath}}view{{next}}" title="next" class="pos pos--right"></a>
-    <a href="{{basePath}}view{{prev}}" title="previous" class="pos pos--bottom pos--center"></a>
-    <a href="{{basePath}}browse{{base}}" title="back" class="pos pos--top pos--center"></a>
+  {{#if (eq style "bi")}}
+    {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--left"></a>{{/if}}
+    {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--right"></a>{{/if}}
+    {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--bottom pos--center"></a>{{/if}}
+    <a href="{{basePath}}browse{{base}}?{{query}}" title="back" class="pos pos--top pos--center"></a>
   {{else if (eq style "ltr")}}
-    <a href="{{basePath}}view{{next}}?style=ltr" title="next" class="pos pos--right"></a>
-    <a href="{{basePath}}view{{prev}}?style=ltr" title="previous" class="pos pos--left"></a>
-    <a href="{{basePath}}browse{{base}}?style=ltr" title="back" class="pos pos--top pos--center"></a>
+    {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--right"></a>{{/if}}
+    {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--left"></a>{{/if}}
+    <a href="{{basePath}}browse{{base}}?{{query}}" title="back" class="pos pos--top pos--center"></a>
   {{else if (eq style "rtl")}}
-    <a href="{{basePath}}view{{next}}?style=rtl" title="next" class="pos pos--left"></a>
-    <a href="{{basePath}}view{{prev}}?style=rtl" title="previous" class="pos pos--right"></a>
-    <a href="{{basePath}}browse{{base}}?style=rtl" title="back" class="pos pos--top pos--center"></a>
+    {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--left"></a>{{/if}}
+    {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--right"></a>{{/if}}
+    <a href="{{basePath}}browse{{base}}?{{query}}" title="back" class="pos pos--top pos--center"></a>
   {{/if}}
 </div>

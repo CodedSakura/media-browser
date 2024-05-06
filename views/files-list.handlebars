@@ -1,9 +1,13 @@
-<h1>{{title}}</h1>
+<h1>
+  {{#each paths ~}}
+    <a href="{{../basePath}}browse{{this.path}}?{{../query}}">{{this.name}}/</a>
+  {{~/each}}
+</h1>
 <ul>
   {{#each items as |item|}}
     {{#if item.dir}}
       <li>
-        <a href="{{../basePath}}browse{{item.path}}?layout=list">
+        <a href="{{../basePath}}browse{{item.path}}?{{../query}}">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path d="M1,2h4v2H15V14H1V2Z" />
           </svg>
@@ -12,7 +16,7 @@
       </li>
     {{else}}
       <li>
-        <a href="{{../basePath}}view{{item.path}}">
+        <a href="{{../basePath}}view{{item.path}}?{{../query}}">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
             <path d="M3,4L6,1V4H3V15H13V1H6Z" />
           </svg>
