@@ -28,16 +28,19 @@ export default function (app: Express) {
   });
   app.get(path.join(basePath, "/browse/*?"), async (req: Request, res: Response) => {
     const viewPath = ("/" + (req.params[0] ?? "")).replace(/([^\/])$/, "$1/");
-    const { layout = "list" } = req.query;
-    const query = new URL(req.url, "https://localhost").searchParams;
-    query.set("layout", layout as string);
+    let { layout = "list" } = req.query;
 
+    if (Array.isArray(layout) && layout.length > 0) {
+      layout = layout.pop()!;
+    }
     // noinspection SuspiciousTypeOfGuard
     if (typeof viewPath !== "string" || typeof layout !== "string" ||
           ![ "list", "grid", "grid-small" ].includes(layout)) {
       res.sendStatus(400);
       return;
     }
+    const query = new URL(req.url, "https://localhost").searchParams;
+    query.set("layout", layout as string);
 
     const fullPath = path.join(mediaDir, viewPath);
 

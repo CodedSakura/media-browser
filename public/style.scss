@@ -14,6 +14,42 @@ body {
   }
 }
 
+h1, h2 {
+  font-size: 1.5em;
+  margin: .5em;
+}
+
+header {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+
+  svg {
+    height: 100%;
+    width: 100%;
+    stroke-width: 1px;
+    stroke: #fffe;
+    fill: none;
+  }
+
+  > div {
+    display: flex;
+    flex-flow: row nowrap;
+    white-space: nowrap;
+
+    .layout {
+      width: 2.5rem;
+      height: 2.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: .25rem;
+
+      &--active {
+        background: #fff4;
+      }
+    }
+  }
+}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -43,7 +79,7 @@ ul {
   }
 }
 
-.grid--container {
+.grid {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -81,7 +117,7 @@ ul {
     }
   }
 
-  &.grid--small {
+  &--small {
     > a {
       width: 160px;
       height: 160px;
@@ -96,11 +132,6 @@ a {
     background: #fff2;
   }
 
-}
-
-h1, h2 {
-  font-size: 1.5em;
-  margin: .5em;
 }
 
 .content {

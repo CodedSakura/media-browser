@@ -1,9 +1,32 @@
-<h1>
-  {{#each paths ~}}
-    <a href="{{../basePath}}browse{{this.path}}?{{../query}}">{{this.name}}/</a>
-  {{~/each}}
-</h1>
-<div class="grid--container">
+<header>
+  <h1>
+    {{#each paths ~}}
+      <a href="{{../basePath}}browse{{this.path}}/?{{../query}}">{{this.name}}/</a>
+    {{~/each}}
+  </h1>
+
+  <div>
+    <a href="?{{query}}&layout=list" class="layout">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+        <path d="M1,2H15 M1,6H15 M1,10H15 M1,14H15" />
+      </svg>
+    </a>
+    <a href="?{{query}}&layout=grid" class="layout layout--active">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+        <path d="M2,2h5v5h-5z M2,9h5v5h-5z M9,2h5v5h-5z M9,9h5v5h-5z" />
+      </svg>
+    </a>
+    <a href="?{{query}}&layout=grid-small" class="layout">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+        <path d="
+        M   2,2h2.5v2.5h-2.5z M   2,6.75h2.5v2.5h-2.5z M   2,11.5h2.5v2.5h-2.5z
+        M6.75,2h2.5v2.5h-2.5z M6.75,6.75h2.5v2.5h-2.5z M6.75,11.5h2.5v2.5h-2.5z
+        M11.5,2h2.5v2.5h-2.5z M11.5,6.75h2.5v2.5h-2.5z M11.5,11.5h2.5v2.5h-2.5z" />
+      </svg>
+    </a>
+  </div>
+</header>
+<div class="grid">
   {{#each items}}
     {{#if this.dir}}
       <a href="{{../basePath}}browse{{this.path}}?{{../query}}">
