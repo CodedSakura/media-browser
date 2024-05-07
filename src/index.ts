@@ -1,7 +1,7 @@
 import connectLiveReload from "connect-livereload";
 import express, { Request, Response } from "express";
 import { create } from "express-handlebars";
-import { readFileSync } from "fs";
+import { mkdirSync, readFileSync } from "fs";
 import livereload from "livereload";
 import fs from "node:fs";
 import type { AddressInfo } from "node:net";
@@ -16,6 +16,8 @@ export const thumbnailDir = path.resolve(__dirname, process.env.THUMB_DIR ?? "..
 export const basePath = ("/" + (process.env.BASE_PATH ?? "")
       .replace(/\/$/, "")
       .replace(/^\//, "") + "/").replace(/^\/\/$/, "/");
+
+mkdirSync(thumbnailDir, { recursive: true });
 
 const liveReloadServer = livereload.createServer();
 liveReloadServer.server.once("connection", () => {
@@ -68,6 +70,8 @@ app.get(path.join(basePath, "*.css"), (req: Request, res: Response) => {
 app.use(path.join(basePath, "/"), express.static(path.resolve(__dirname, "../public")));
 
 app.use(path.join(basePath, "/media"), express.static(mediaDir));
+
+app.use(path.join(basePath, "/thumbs"), express.static(thumbnailDir));
 
 const listener = app.listen(Number(process.env.PORT ?? 80), () => {
   const address = listener.address()! as AddressInfo;

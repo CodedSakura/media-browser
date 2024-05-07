@@ -93,6 +93,14 @@ ul {
     //display: inline-block;
   }
 
+  img {
+    margin: 0 auto;
+    height: 100%;
+    max-width: 100%;
+    min-height: 0;
+    object-fit: contain;
+  }
+
   &::after {
     content: "";
     flex: auto;
@@ -101,10 +109,11 @@ ul {
   > a {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr min-content;
+    grid-template-rows: auto min-content;
     gap: 4px;
     width: 320px;
     height: 320px;
+    max-height: 320px;
     margin: 10px;
 
     overflow: hidden;
@@ -121,6 +130,7 @@ ul {
     > a {
       width: 160px;
       height: 160px;
+      max-height: 160px;
     }
   }
 }
