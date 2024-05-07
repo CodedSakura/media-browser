@@ -17,6 +17,8 @@ export const basePath = ("/" + (process.env.BASE_PATH ?? "")
       .replace(/\/$/, "")
       .replace(/^\//, "") + "/").replace(/^\/\/$/, "/");
 
+const title = process.env.TITLE ?? "Media Browser";
+
 mkdirSync(thumbnailDir, { recursive: true });
 
 const liveReloadServer = livereload.createServer();
@@ -32,6 +34,7 @@ const hbs = create({
   helpers: {
     eq: (a: any, b: any) => a == b,
     getFileContents: (p: string) => readFileSync(path.join(mediaDir, p), "utf-8"),
+    appTitle: () => title,
   },
 });
 
