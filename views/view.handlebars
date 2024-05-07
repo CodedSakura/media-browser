@@ -15,14 +15,14 @@
     {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--left"></a>{{/if}}
     {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--right"></a>{{/if}}
     {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--bottom pos--center"></a>{{/if}}
-    <a href="{{basePath}}browse{{base}}?{{query}}" title="back" class="pos pos--top pos--center"></a>
+    <a href="{{basePath}}browse{{base}}?{{query}}#{{name}}" title="back" class="pos pos--top pos--center"></a>
   {{else if (eq style "ltr")}}
     {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--right"></a>{{/if}}
     {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--left"></a>{{/if}}
-    <a href="{{basePath}}browse{{base}}?{{query}}" title="back" class="pos pos--top pos--center"></a>
+    <a href="{{basePath}}browse{{base}}?{{query}}#{{name}}" title="back" class="pos pos--top pos--center"></a>
   {{else if (eq style "rtl")}}
     {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" class="pos pos--left"></a>{{/if}}
     {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--right"></a>{{/if}}
-    <a href="{{basePath}}browse{{base}}?{{query}}" title="back" class="pos pos--top pos--center"></a>
+    <a href="{{basePath}}browse{{base}}?{{query}}#{{name}}" title="back" class="pos pos--top pos--center"></a>
   {{/if}}
 </div>

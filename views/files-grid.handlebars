@@ -29,14 +29,18 @@
 <div class="grid">
   {{#each items}}
     {{#if this.dir}}
-      <a href="{{../basePath}}browse{{this.path}}?{{../query}}">
+      <a href="{{../basePath}}browse{{this.path}}?{{../query}}"
+         id="{{this.name}}"
+         title="{{this.name}}">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
           <path d="M1,2h4v2H15V14H1V2Z" />
         </svg>
         <div>{{this.name}}</div>
       </a>
     {{else}}
-      <a href="{{../basePath}}view{{this.path}}?{{../query}}">
+      <a href="{{../basePath}}view{{this.path}}?{{../query}}"
+         id="{{this.name}}"
+         title="{{this.name}}">
         {{#if this.thumbnail}}
           <img src="{{../basePath}}thumbs/{{this.thumbnail}}" alt="thumbnail not found" />
         {{else}}

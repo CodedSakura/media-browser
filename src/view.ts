@@ -79,6 +79,7 @@ export default function (app: Express) {
       title: viewPath,
       type: mimeTypeToFileType(mime),
       query: query.toString(),
+      name: items[thisIndex].name,
       base, next, prev, basePath, style, fit,
     });
   });
