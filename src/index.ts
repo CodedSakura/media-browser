@@ -8,7 +8,7 @@ import type { AddressInfo } from "node:net";
 import path from "node:path";
 import qs from "qs";
 import sass from "sass";
-import browse from "./browse";
+import browse, { isAllowedMiddleware } from "./browse";
 import view from "./view";
 
 export const mediaDir = path.resolve(__dirname, process.env.MEDIA_DIR ?? "../media/");
@@ -72,9 +72,9 @@ app.get(path.join(basePath, "*.css"), (req: Request, res: Response) => {
 
 app.use(path.join(basePath, "/"), express.static(path.resolve(__dirname, "../public")));
 
-app.use(path.join(basePath, "/media"), express.static(mediaDir));
+app.use(path.join(basePath, "/media"), isAllowedMiddleware("/media"), express.static(mediaDir));
 
-app.use(path.join(basePath, "/thumbs"), express.static(thumbnailDir));
+app.use(path.join(basePath, "/thumbs"), isAllowedMiddleware("/thumbs"), express.static(thumbnailDir));
 
 const listener = app.listen(Number(process.env.PORT ?? 80), () => {
   const address = listener.address()! as AddressInfo;

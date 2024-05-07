@@ -1,8 +1,9 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, RequestHandler, Response } from "express";
 import { existsSync } from "node:fs";
 import { lstat, mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { readConf, readDirConf } from "./conf";
 import { basePath, mediaDir, thumbnailDir } from "./index";
 
 export interface File {
@@ -12,9 +13,17 @@ export interface File {
   thumbnail?: string,
 }
 
-const thumbnailsForFilenames = /\.(?:png|jpeg|jpg)$/i;
+export async function getFileList(viewPath: string): Promise<File[]> {
+  const fullPath = path.join(mediaDir, viewPath);
 
-export async function getFileList(fullPath: string): Promise<File[]> {
+  const conf = await readConf();
+  const dirConf = await readDirConf(viewPath);
+
+  if (conf.mode === "whitelist" && !conf.whitelist.some(p => p.startsWith(viewPath))) {
+    console.log("not whitelisted", viewPath);
+    return [];
+  }
+
   return (await readdir(fullPath, { withFileTypes: true }))
         .sort((a, b) => a.isDirectory() ?
               (b.isDirectory() ? a.name.localeCompare(b.name) : -1) :
@@ -23,11 +32,64 @@ export async function getFileList(fullPath: string): Promise<File[]> {
           name: v.name,
           path: path.sep + path.relative(mediaDir, path.resolve(v.path, v.name)),
           dir: v.isDirectory(),
-          thumbnail: thumbnailsForFilenames.test(v.name) ?
+          thumbnail: conf.renderThumbnails && conf.renderThumbnails.map(v => v.toLowerCase()).includes(path.extname(v.name).toLowerCase()) ?
                 path.relative(mediaDir, path.resolve(v.path, v.name)) :
                 undefined,
-        }));
+        }))
+        .filter(v => {
+          if (v.name.startsWith(conf.hidePrefix)) {
+            return false;
+          }
+          if (conf.hideRaws && conf.hideRaws.map(v => v.toLowerCase()).includes(path.extname(v.name).toLowerCase())) {
+            return false;
+          }
+
+          if (v.dir && conf.mode === "whitelist") {
+            if (!conf.whitelist.some(p => p.startsWith(v.path))) {
+              return false;
+            }
+          }
+
+          if (dirConf.hide) {
+            return false;
+          }
+
+          if (dirConf.mode === "whitelist") {
+            return dirConf.list.includes(v.name);
+          }
+          return !dirConf.list.includes(v.name);
+        });
 }
+
+export const isAllowedMiddleware = (mediaPath: string): RequestHandler => {
+  return async (req, res, next) => {
+    const viewPath = path.sep + path.dirname(path.relative(basePath, req.path));
+    const name = path.basename(req.path);
+
+    const conf = await readConf();
+    const dirConf = await readDirConf(viewPath);
+
+    if (conf.whitelist && !conf.whitelist.some(p => p.startsWith(viewPath))) {
+      res.sendStatus(404);
+      return;
+    }
+
+    if (dirConf.hide) {
+      res.sendStatus(404);
+      return;
+    }
+    if (dirConf.mode === "whitelist" && !dirConf.list.includes(name)) {
+      res.sendStatus(404);
+      return;
+    }
+    if (dirConf.mode === "blacklist" && dirConf.list.includes(name)) {
+      res.sendStatus(404);
+      return;
+    }
+
+    next();
+  };
+};
 
 export default function (app: Express) {
   app.get(path.join(basePath, "/"), (_req: Request, res: Response) => {
@@ -56,6 +118,13 @@ export default function (app: Express) {
       return;
     }
 
+    const conf = await readConf();
+
+    if (conf.mode === "whitelist" && !conf.whitelist.some(p => p.startsWith(viewPath))) {
+      res.sendStatus(404);
+      return;
+    }
+
     const pathSections = viewPath.split(path.sep)
           .filter(v => v)
           .map((v, i, a) => ({
@@ -67,7 +136,7 @@ export default function (app: Express) {
       path: path.sep,
     });
 
-    const items = await getFileList(fullPath);
+    const items = await getFileList(viewPath);
 
     if (path.relative(mediaDir, fullPath) !== "") {
       items.unshift({

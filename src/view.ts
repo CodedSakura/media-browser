@@ -34,6 +34,7 @@ const recognisedMimeTypes: Record<string, FileType> = {
   "video/mp4": FileType.Video,
   "video/x-matroska": FileType.Video,
   "video/webm": FileType.Video,
+  "video/quicktime": FileType.Video,
   "text/plain": FileType.Text,
 } as const;
 
@@ -64,8 +65,8 @@ export default function (app: Express) {
     }
 
     const mime = pathToMimeType(fullPath);
-    const fullBase = path.dirname(fullPath);
-    const items = (await getFileList(fullBase))
+    const viewBase = path.sep + path.dirname(viewPath);
+    const items = (await getFileList(viewBase))
           .filter(v => !v.dir);
 
     const absViewPath = path.sep + viewPath;
@@ -74,6 +75,11 @@ export default function (app: Express) {
     const base = path.dirname(absViewPath);
     const next = thisIndex < items.length - 1 ? items[thisIndex + 1].path : false;
     const prev = thisIndex > 0 ? items[thisIndex - 1].path : false;
+
+    if (thisIndex === -1) {
+      res.sendStatus(404);
+      return;
+    }
 
     res.render("view", {
       title: viewPath,
