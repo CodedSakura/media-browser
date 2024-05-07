@@ -97,14 +97,14 @@ export default function (app: Express) {
   });
   app.get(path.join(basePath, "/browse/*?"), async (req: Request, res: Response) => {
     const viewPath = ("/" + (req.params[0] ?? "")).replace(/([^\/])$/, "$1/");
-    let { layout = "list" } = req.query;
+    let { layout = "default" } = req.query;
 
     if (Array.isArray(layout) && layout.length > 0) {
       layout = layout.pop()!;
     }
     // noinspection SuspiciousTypeOfGuard
     if (typeof viewPath !== "string" || typeof layout !== "string" ||
-          ![ "list", "grid", "grid-small" ].includes(layout)) {
+          ![ "default", "list", "grid", "grid-small" ].includes(layout)) {
       res.sendStatus(400);
       return;
     }
@@ -119,6 +119,7 @@ export default function (app: Express) {
     }
 
     const conf = await readConf();
+    const dirConf = await readDirConf(viewPath);
 
     if (conf.mode === "whitelist" && !conf.whitelist.some(p => p.startsWith(viewPath))) {
       res.sendStatus(404);
@@ -161,7 +162,7 @@ export default function (app: Express) {
                       .rotate()
                       .toFile(path.join(thumbnailDir, v as string))));
 
-    res.render(`files-${layout}`, {
+    res.render(`files-${layout == "default" ? (dirConf.defaultLayout === "default" ? conf.defaultLayout : dirConf.defaultLayout) : layout}`, {
       basePath,
       items,
       title: viewPath,

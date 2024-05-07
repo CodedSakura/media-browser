@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { lstat } from "node:fs/promises";
 import path from "node:path";
 import { getFileList } from "./browse";
+import { readConf, readDirConf } from "./conf";
 import { basePath, mediaDir } from "./index";
 
 /**
@@ -52,7 +53,7 @@ function mimeTypeToFileType(mime: string): FileType {
 export default function (app: Express) {
   app.get(path.join(basePath, "/view/*"), async (req: Request, res: Response) => {
     const viewPath = req.params[0];
-    const { style = "ltr", fit = "h" } = req.query;
+    const { style = "default", fit = "default" } = req.query;
     const query = new URL(req.url, "https://localhost").searchParams;
     query.set("style", style as string);
     query.set("fit", fit as string);
@@ -81,12 +82,17 @@ export default function (app: Express) {
       return;
     }
 
+    const conf = await readConf();
+    const dirConf = await readDirConf(viewBase);
+
     res.render("view", {
       title: viewPath,
       type: mimeTypeToFileType(mime),
       query: query.toString(),
       name: items[thisIndex].name,
-      base, next, prev, basePath, style, fit,
+      style: style === "default" ? (dirConf.defaultStyle === "default" ? conf.defaultStyle : dirConf.defaultStyle) : style,
+      fit: fit === "default" ? (dirConf.defaultFit === "default" ? conf.defaultFit : dirConf.defaultFit) : fit,
+      base, next, prev, basePath,
     });
   });
 }

@@ -12,7 +12,7 @@ export interface Conf {
   directoryConfigName: string,
   hidePrefix: string,
   confExpireMs: number,
-  defaultLayout: "list" | "grid" | "small-grid",
+  defaultLayout: "list" | "grid" | "grid-small",
   defaultStyle: "ltr" | "rtl" | "bi",
   defaultFit: "h" | "v",
 }
@@ -21,6 +21,9 @@ export interface DirConf {
   mode: "blacklist" | "whitelist",
   hide: boolean,
   list: string[],
+  defaultLayout: "list" | "grid" | "grid-small" | "default",
+  defaultStyle: "ltr" | "rtl" | "bi" | "default",
+  defaultFit: "h" | "v" | "default",
 }
 
 type Cached<T> = { value: T, expires: number };
@@ -35,7 +38,7 @@ const defaultConf: Conf = {
   directoryConfigName: ".~conf.json",
   hidePrefix: ".",
   confExpireMs: 10000,
-  defaultLayout: "small-grid",
+  defaultLayout: "grid-small",
   defaultStyle: "ltr",
   defaultFit: "h",
 } as const;
@@ -43,6 +46,9 @@ const defaultDirConf: DirConf = {
   mode: "blacklist",
   hide: false,
   list: [],
+  defaultLayout: "default",
+  defaultStyle: "default",
+  defaultFit: "default",
 } as const;
 
 const latestConf: Cached<Conf> = { expires: Date.now(), value: defaultConf };
