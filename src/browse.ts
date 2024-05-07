@@ -34,7 +34,7 @@ export default function (app: Express) {
 
     // noinspection SuspiciousTypeOfGuard
     if (typeof viewPath !== "string" || typeof layout !== "string" ||
-          ![ "list", "grid" ].includes(layout)) {
+          ![ "list", "grid", "grid-small" ].includes(layout)) {
       res.sendStatus(400);
       return;
     }

@@ -1,0 +1,24 @@
+<h1>
+  {{#each paths ~}}
+    <a href="{{../basePath}}browse{{this.path}}?{{../query}}">{{this.name}}/</a>
+  {{~/each}}
+</h1>
+<div class="grid--container grid--small">
+  {{#each items}}
+    {{#if this.dir}}
+      <a href="{{../basePath}}browse{{this.path}}?{{../query}}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M1,2h4v2H15V14H1V2Z" />
+        </svg>
+        <div>{{this.name}}</div>
+      </a>
+    {{else}}
+      <a href="{{../basePath}}view{{this.path}}?{{../query}}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M3,4V4H3V15H13V1H6ZM3,4H6V1" />
+        </svg>
+        <div>{{this.name}}</div>
+      </a>
+    {{/if}}
+  {{/each}}
+</div>

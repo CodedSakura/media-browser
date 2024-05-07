@@ -43,6 +43,52 @@ ul {
   }
 }
 
+.grid--container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+
+  svg {
+    margin: 0 auto;
+    height: 100%;
+    stroke-width: 1px;
+    stroke: #fffe;
+    fill: none;
+    //display: inline-block;
+  }
+
+  &::after {
+    content: "";
+    flex: auto;
+  }
+
+  > a {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr min-content;
+    gap: 4px;
+    width: 320px;
+    height: 320px;
+    margin: 10px;
+
+    overflow: hidden;
+
+    > div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+  }
+
+  &.grid--small {
+    > a {
+      width: 160px;
+      height: 160px;
+    }
+  }
+}
+
 a {
   color: #0bf;
 
