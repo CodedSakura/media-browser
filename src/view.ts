@@ -136,6 +136,7 @@ export default function (app: Express) {
       name: items[thisIndex].name,
       style: style === "default" ? (dirConf.defaultStyle === "default" ? conf.defaultStyle : dirConf.defaultStyle) : style,
       fit: fit === "default" ? (dirConf.defaultFit === "default" ? conf.defaultFit : dirConf.defaultFit) : fit,
+      urlBase: `${req.protocol}://${req.get("host")}`,
       base, next, prev, basePath, exif, raws,
     });
   });
