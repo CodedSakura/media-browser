@@ -55,7 +55,15 @@ function mimeTypeToFileType(mime: string): FileType {
 export default function (app: Express) {
   app.get(path.join(basePath, "/view/*"), async (req: Request, res: Response) => {
     const viewPath = req.params[0];
-    const { style = "default", fit = "default" } = req.query;
+    let { style = "default", fit = "default" } = req.query;
+
+    if (Array.isArray(style) && style.length > 0) {
+      style = style.pop()!;
+    }
+    if (Array.isArray(fit) && fit.length > 0) {
+      fit = fit.pop()!;
+    }
+
     const query = new URL(req.url, "https://localhost").searchParams;
     query.set("style", style as string);
     query.set("fit", fit as string);
@@ -101,7 +109,7 @@ export default function (app: Express) {
               `${exif.exif.Photo.ExposureTime.toPrecision(2)}s` :
               `1/${invExposure > 100 ? invExposure.toFixed(0) : invExposure.toPrecision(2)}s`;
         exif.FocalLength = `${exif.exif.Photo.FocalLength.toFixed(0)}mm`;
-        exif.ISO = exif.exif.Photo.ISOSpeedRatings.toString();
+        exif.ISO = exif.exif.Photo.ISOSpeedRatings?.toString() ?? "??";
       }
     }
 
