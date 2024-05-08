@@ -1,7 +1,9 @@
+import exifReader from "exif-reader";
 import type { Express, Request, Response } from "express";
 import { existsSync } from "node:fs";
-import { lstat } from "node:fs/promises";
+import { access, lstat } from "node:fs/promises";
 import path from "node:path";
+import sharp from "sharp";
 import { getFileList } from "./browse";
 import { readConf, readDirConf } from "./conf";
 import { basePath, mediaDir } from "./index";
@@ -85,6 +87,40 @@ export default function (app: Express) {
     const conf = await readConf();
     const dirConf = await readDirConf(viewBase);
 
+    let exif: any = undefined;
+    if (conf.showExif && conf.showExif.map(v => v.toLowerCase()).includes(path.extname(viewPath).toLowerCase())) {
+      exif = await sharp(fullPath)
+            .metadata();
+      if (exif.exif) {
+        exif.exif = exifReader(exif.exif);
+
+        const invExposure = 1 / exif.exif.Photo.ExposureTime;
+
+        exif.FNumber = `f/${exif.exif.Photo.FNumber.toPrecision(2)}`;
+        exif.Exposure = exif.exif.Photo.ExposureTime >= 1 ?
+              `${exif.exif.Photo.ExposureTime.toPrecision(2)}s` :
+              `1/${invExposure > 100 ? invExposure.toFixed(0) : invExposure.toPrecision(2)}s`;
+        exif.FocalLength = `${exif.exif.Photo.FocalLength.toFixed(0)}mm`;
+        exif.ISO = exif.exif.Photo.ISOSpeedRatings.toString();
+      }
+    }
+
+    let raws: { name: string, path: string }[] = [];
+    if (conf.hideRaws) {
+      const altName = conf.rawStrategy == "replace" ?
+            viewPath.slice(0, -path.extname(viewPath).length) :
+            viewPath;
+
+      raws = (await Promise.all(conf.hideRaws
+            .map(e => altName + e)
+            .map(async f => [ f, await access(path.join(mediaDir, f)).then(() => true, () => false) ] as [ string, boolean ])))
+            .filter(([ , a ]) => a)
+            .map(([ v ]) => ({
+              path: v,
+              name: path.basename(v),
+            }));
+    }
+
     res.render("view", {
       title: viewPath,
       type: mimeTypeToFileType(mime),
@@ -92,7 +128,7 @@ export default function (app: Express) {
       name: items[thisIndex].name,
       style: style === "default" ? (dirConf.defaultStyle === "default" ? conf.defaultStyle : dirConf.defaultStyle) : style,
       fit: fit === "default" ? (dirConf.defaultFit === "default" ? conf.defaultFit : dirConf.defaultFit) : fit,
-      base, next, prev, basePath,
+      base, next, prev, basePath, exif, raws,
     });
   });
 }

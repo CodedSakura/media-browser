@@ -1,12 +1,12 @@
 <div class="content">
   {{#if (eq type "video")}}
-    <video controls autoplay loop src="{{basePath}}media/{{title}}?{{query}}"></video>
+    <video controls autoplay loop src="{{basePath}}media/{{title}}"></video>
   {{else if (eq type "image")}}
-    <img src="{{basePath}}media/{{title}}?{{query}}" alt="{{title}}" class="fit--{{fit}}" />
+    <img src="{{basePath}}media/{{title}}" alt="{{title}}" class="fit--{{fit}}" />
   {{else if (eq type "text")}}
     <pre>{{getFileContents title}}</pre>
   {{else}}
-    <a href="{{basePath}}media/{{title}}?{{query}}">Download {{title}}</a>
+    <a href="{{basePath}}media/{{title}}">Download {{title}}</a>
   {{/if}}
 </div>
 <div class="nav-overlay">
@@ -25,4 +25,22 @@
     {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" class="pos pos--right">&lt;</a>{{/if}}
     <a href="{{basePath}}browse{{base}}?{{query}}#{{name}}" title="back" class="pos pos--top pos--center">^</a>
   {{/if}}
+  <footer>
+    <div>
+      {{#if exif}}
+        {{exif.FocalLength}};
+        {{exif.FNumber}};
+        {{exif.Exposure}};
+        ISO {{exif.ISO}}
+      {{/if}}
+    </div>
+    <div>
+      {{#each raws}}
+        <a href="{{this.path}}">{{this.name}}</a>
+      {{/each}}
+    </div>
+    <div>
+      config
+    </div>
+  </footer>
 </div>

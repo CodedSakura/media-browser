@@ -941,6 +941,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"exif-reader@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "exif-reader@npm:2.0.1"
+  checksum: 10/127c174c9ffed1634c10afd1457ff996f000449c21d0b4b4bb5d77a477d33850bfb3491c8b1de190b51fa93a066dbeecd87c2595ad386e585aa1410b08a467fb
+  languageName: node
+  linkType: hard
+
 "exponential-backoff@npm:^3.1.1":
   version: 3.1.1
   resolution: "exponential-backoff@npm:3.1.1"
@@ -1479,6 +1486,7 @@ __metadata:
     "@types/qs": "npm:^6.9.12"
     connect-livereload: "npm:^0.6.1"
     cors: "npm:^2.8.5"
+    exif-reader: "npm:^2.0.1"
     express: "npm:^4.18.3"
     express-handlebars: "npm:^7.1.2"
     helmet: "npm:^7.1.0"

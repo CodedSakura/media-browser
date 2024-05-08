@@ -195,6 +195,19 @@ a {
     background: #333;
     padding: .25em;
     pointer-events: auto;
+
+    > div {
+      width: 100%;
+      text-align: center;
+    }
+
+    :first-child {
+      text-align: left;
+    }
+
+    :last-child {
+      text-align: right;
+    }
   }
 
   .pos {
