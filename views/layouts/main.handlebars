@@ -5,17 +5,19 @@
   <title>{{title}} - {{appTitle}}</title>
   <link rel="stylesheet" href="{{basePath}}style.css">
 
-  <meta property="og:title" content="{{appTitle}}" />
-  <meta property="og:description" content="{{title}}" />
+  <meta property="og:title" name="og:title" content="{{appTitle}}" />
+  <meta property="og:description" name="og:description" content="{{title}}" />
 
-  <meta name="twitter:title" content="{{appTitle}}" />
-  <meta name="twitter:description" content="{{title}}" />
+  <meta property="twitter:title" name="twitter:title" content="{{appTitle}}" />
+  <meta property="twitter:description" name="twitter:description" content="{{title}}" />
   {{#if (eq type "image")}}
-    <!--    <meta property="og:type" content="image" /> -->
-    <meta property="og:image" content="{{urlBase}}{{basePath}}thumbs/{{title}}" />
+    <meta property="og:type" name="og:type" content="website" />
+    <meta property="og:image" name="og:image" content="https://{{domain}}{{basePath}}thumbs/{{title}}" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="{{urlBase}}{{basePath}}thumbs/{{title}}" />
+    <meta property="twitter:card" name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:image" name="twitter:image" content="https://{{domain}}{{basePath}}thumbs/{{title}}" />
+    <meta property="twitter:domain" name="twitter:domain" content="{{domain}}">
+    <meta property="twitter:url" name="twitter:url" content="https://{{domain}}{{{url}}}">
   {{/if}}
 </head>
 <body>
