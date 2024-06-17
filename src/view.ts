@@ -97,10 +97,10 @@ export default function (app: Express) {
 
     let exif: any = undefined;
     if (conf.showExif && conf.showExif.map(v => v.toLowerCase()).includes(path.extname(viewPath).toLowerCase())) {
-      exif = await sharp(fullPath)
+      const { exif: exif_data } = await sharp(fullPath)
             .metadata();
-      if (exif.exif && exif.ExposureTime && exif.FNumber && exif.FocalLength) {
-        exif.exif = exifReader(exif.exif);
+      if (exif_data) {
+        exif = { exif: exifReader(exif_data) };
 
         const invExposure = 1 / exif.exif.Photo.ExposureTime;
 
@@ -129,6 +129,7 @@ export default function (app: Express) {
             }));
     }
 
+    console.log(exif);
     res.render("view", {
       title: viewPath,
       type: mimeTypeToFileType(mime),
