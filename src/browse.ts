@@ -68,8 +68,7 @@ export const isAllowedMiddleware = (mediaPath: string): RequestHandler => {
 
     const conf = await readConf();
     const dirConf = await readDirConf(viewPath);
-
-    if (conf.whitelist && !conf.whitelist.some(p => p.startsWith(viewPath))) {
+    if (conf.whitelist && conf.whitelist.length > 0 && !conf.whitelist.some(p => p.startsWith(viewPath))) {
       res.sendStatus(404);
       return;
     }

@@ -99,7 +99,7 @@ export default function (app: Express) {
     if (conf.showExif && conf.showExif.map(v => v.toLowerCase()).includes(path.extname(viewPath).toLowerCase())) {
       exif = await sharp(fullPath)
             .metadata();
-      if (exif.exif) {
+      if (exif.exif && exif.ExposureTime && exif.FNumber && exif.FocalLength) {
         exif.exif = exifReader(exif.exif);
 
         const invExposure = 1 / exif.exif.Photo.ExposureTime;
