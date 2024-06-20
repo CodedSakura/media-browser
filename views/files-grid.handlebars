@@ -29,7 +29,7 @@
 <div class="grid">
   {{#each items}}
     {{#if this.dir}}
-      <a href="{{../basePath}}browse{{this.path}}?{{../query}}"
+      <a href="{{../basePath}}browse{{this.path}}?{{../query}}{{#if (eq this.name "..")}}#{{getCurrDirName ../paths}}{{/if}}"
          id="{{this.name}}"
          title="{{this.name}}">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">

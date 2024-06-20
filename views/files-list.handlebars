@@ -30,7 +30,7 @@
   {{#each items as |item|}}
     {{#if item.dir}}
       <li>
-        <a href="{{../basePath}}browse{{item.path}}/?{{../query}}"
+        <a href="{{../basePath}}browse{{item.path}}/?{{../query}}{{#if (eq this.name "..")}}#{{getCurrDirName ../paths}}{{/if}}"
            id="{{item.name}}"
            title="{{item.name}}">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">

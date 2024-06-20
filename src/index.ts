@@ -35,6 +35,7 @@ const hbs = create({
     eq: (a: any, b: any) => a == b,
     getFileContents: (p: string) => readFileSync(path.join(mediaDir, p), "utf-8"),
     appTitle: () => title,
+    getCurrDirName: (arr: { name: string }[]) => arr[arr.length - 1].name,
   },
 });
 
