@@ -102,14 +102,16 @@ export default function (app: Express) {
       if (exif_data) {
         exif = { exif: exifReader(exif_data) };
 
-        const invExposure = 1 / exif.exif.Photo.ExposureTime;
+        if (exif.exif.Photo.FNumber && exif.exif.Photo.ExposureTime && exif.exif.Photo.FocalLength) {
+          const invExposure = 1 / exif.exif.Photo.ExposureTime;
 
-        exif.FNumber = `f/${exif.exif.Photo.FNumber.toPrecision(2)}`;
-        exif.Exposure = exif.exif.Photo.ExposureTime >= 1 ?
-              `${exif.exif.Photo.ExposureTime.toPrecision(2)}s` :
-              `1/${invExposure > 100 ? invExposure.toFixed(0) : invExposure.toPrecision(2)}s`;
-        exif.FocalLength = `${exif.exif.Photo.FocalLength.toFixed(0)}mm`;
-        exif.ISO = exif.exif.Photo.ISOSpeedRatings?.toString() ?? "??";
+          exif.FNumber = `f/${exif.exif.Photo.FNumber.toPrecision(2)}`;
+          exif.Exposure = exif.exif.Photo.ExposureTime >= 1 ?
+                `${exif.exif.Photo.ExposureTime.toPrecision(2)}s` :
+                `1/${invExposure > 100 ? invExposure.toFixed(0) : invExposure.toPrecision(2)}s`;
+          exif.FocalLength = `${exif.exif.Photo.FocalLength.toFixed(0)}mm`;
+          exif.ISO = exif.exif.Photo.ISOSpeedRatings?.toString() ?? "??";
+        }
       }
     }
 
