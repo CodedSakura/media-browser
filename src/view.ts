@@ -25,10 +25,12 @@ enum FileType {
   Video = "video",
   Text = "text",
   Audio = "audio",
+  Embedded = "embedded",
   Unknown = "unknown",
 }
 
 const recognisedMimeTypes: Record<string, FileType> = {
+  "application/pdf": FileType.Embedded,
   "image/png": FileType.Image,
   "image/svg+xml": FileType.Image,
   "image/jpeg": FileType.Image,
@@ -131,7 +133,6 @@ export default function (app: Express) {
             }));
     }
 
-    console.log(exif);
     res.render("view", {
       title: viewPath,
       type: mimeTypeToFileType(mime),
