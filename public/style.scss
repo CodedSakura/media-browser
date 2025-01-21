@@ -266,6 +266,36 @@ a {
   }
 }
 
+#script-overlay {
+  grid-template: min-content 1fr min-content / min-content 1fr min-content;
+
+  h2 {
+    animation: none;
+    margin-top: 0;
+    z-index: 15;
+    pointer-events: auto;
+  }
+
+  * {
+    transition: transform 200ms ease;
+  }
+
+  &.hidden {
+    [data-move="up"] {
+      transform: translateY(-100%);
+    }
+    [data-move="left"] {
+      transform: translateX(-100%);
+    }
+    [data-move="down"] {
+      transform: translateY(100%);
+    }
+    [data-move="right"] {
+      transform: translateX(100%);
+    }
+  }
+}
+
 @keyframes slide-out-up {
   from {
     transform: translateY(0%);

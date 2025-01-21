@@ -29,6 +29,6 @@
   },
   "scripts": {
     "start": "node -r ts-node/register --trace-warnings --unhandled-rejections=strict src/index.ts",
-    "dev": "env PORT=8000 nodemon src/index.ts -e handlebars,ts,scss,svg,css,js,sass"
+    "dev": "env PORT=8000 nodemon --watch src --watch views -e handlebars,ts,scss,svg,css,js,sass src/index.ts"
   }
 }
