@@ -6,7 +6,7 @@ import path from "node:path";
 import sharp from "sharp";
 import { getFileList } from "./browse";
 import { readConf, readDirConf } from "./conf";
-import { basePath, mediaDir } from "./index";
+import { basePath, FileNotFoundError, mediaDir } from "./index";
 
 /**
  * Get the file mime type from path. No extension required.
@@ -54,9 +54,83 @@ function mimeTypeToFileType(mime: string): FileType {
   return fileType;
 }
 
+async function getStats(viewPath: string) {
+  const fullPath = path.join(mediaDir, viewPath);
+
+  if (!existsSync(fullPath) || (await lstat(fullPath)).isDirectory()) {
+    throw new FileNotFoundError();
+  }
+
+  const mime = pathToMimeType(fullPath);
+  const viewBase = path.sep + path.dirname(viewPath);
+  const items = (await getFileList(viewBase))
+        .filter(v => !v.dir);
+
+  const absViewPath = path.sep + viewPath;
+
+  const thisIndex = items.findIndex(v => v.path == absViewPath);
+  const base = path.dirname(absViewPath);
+  const next = thisIndex < items.length - 1 ? items[thisIndex + 1].path : false;
+  const prev = thisIndex > 0 ? items[thisIndex - 1].path : false;
+
+  if (thisIndex === -1) {
+    throw new FileNotFoundError();
+  }
+
+  const conf = await readConf();
+  const dirConf = await readDirConf(viewBase);
+
+  let exif: any = undefined;
+  if (conf.showExif && conf.showExif.map(v => v.toLowerCase()).includes(path.extname(viewPath).toLowerCase())) {
+    const { exif: exif_data } = await sharp(fullPath)
+          .metadata();
+    if (exif_data) {
+      exif = { exif: exifReader(exif_data) };
+
+      if (exif.exif.Photo.FNumber && exif.exif.Photo.ExposureTime && exif.exif.Photo.FocalLength) {
+        const invExposure = 1 / exif.exif.Photo.ExposureTime;
+
+        exif.FNumber = `f/${exif.exif.Photo.FNumber.toPrecision(2)}`;
+        exif.Exposure = exif.exif.Photo.ExposureTime >= 1 ?
+              `${exif.exif.Photo.ExposureTime.toPrecision(2)}s` :
+              `1/${invExposure > 100 ? invExposure.toFixed(0) : invExposure.toPrecision(2)}s`;
+        exif.FocalLength = `${exif.exif.Photo.FocalLength.toFixed(0)}mm`;
+        exif.ISO = exif.exif.Photo.ISOSpeedRatings?.toString() ?? "??";
+      }
+    }
+  }
+
+  let raws: { name: string, path: string }[] = [];
+  if (conf.hideRaws) {
+    const altName = conf.rawStrategy == "replace" ?
+          viewPath.slice(0, -path.extname(viewPath).length) :
+          viewPath;
+
+    raws = (await Promise.all(conf.hideRaws
+          .map(e => altName + e)
+          .map(async f => [ f, await access(path.join(mediaDir, f)).then(() => true, () => false) ] as [ string, boolean ])))
+          .filter(([ , a ]) => a)
+          .map(([ v ]) => ({
+            path: v,
+            name: path.basename(v),
+          }));
+  }
+
+  return {
+    name: items[thisIndex].name,
+    type: mimeTypeToFileType(mime),
+    base, next, prev, basePath,
+    conf, dirConf,
+    exif, raws,
+  }
+}
+
 export default function (app: Express) {
   app.get(path.join(basePath, "/view/*path"), async (req: Request, res: Response) => {
     const viewPath = path.join(...req.params.path);
+
+    const { name, type, base, next, prev, basePath, exif, raws, conf, dirConf } = await getStats(viewPath);
+
     let { style = "default", fit = "default" } = req.query;
 
     if (Array.isArray(style) && style.length > 0) {
@@ -70,79 +144,25 @@ export default function (app: Express) {
     query.set("style", style as string);
     query.set("fit", fit as string);
 
-    const fullPath = path.join(mediaDir, viewPath);
-
-    if (!existsSync(fullPath) || (await lstat(fullPath)).isDirectory()) {
-      res.sendStatus(404);
-      return;
-    }
-
-    const mime = pathToMimeType(fullPath);
-    const viewBase = path.sep + path.dirname(viewPath);
-    const items = (await getFileList(viewBase))
-          .filter(v => !v.dir);
-
-    const absViewPath = path.sep + viewPath;
-
-    const thisIndex = items.findIndex(v => v.path == absViewPath);
-    const base = path.dirname(absViewPath);
-    const next = thisIndex < items.length - 1 ? items[thisIndex + 1].path : false;
-    const prev = thisIndex > 0 ? items[thisIndex - 1].path : false;
-
-    if (thisIndex === -1) {
-      res.sendStatus(404);
-      return;
-    }
-
-    const conf = await readConf();
-    const dirConf = await readDirConf(viewBase);
-
-    let exif: any = undefined;
-    if (conf.showExif && conf.showExif.map(v => v.toLowerCase()).includes(path.extname(viewPath).toLowerCase())) {
-      const { exif: exif_data } = await sharp(fullPath)
-            .metadata();
-      if (exif_data) {
-        exif = { exif: exifReader(exif_data) };
-
-        if (exif.exif.Photo.FNumber && exif.exif.Photo.ExposureTime && exif.exif.Photo.FocalLength) {
-          const invExposure = 1 / exif.exif.Photo.ExposureTime;
-
-          exif.FNumber = `f/${exif.exif.Photo.FNumber.toPrecision(2)}`;
-          exif.Exposure = exif.exif.Photo.ExposureTime >= 1 ?
-                `${exif.exif.Photo.ExposureTime.toPrecision(2)}s` :
-                `1/${invExposure > 100 ? invExposure.toFixed(0) : invExposure.toPrecision(2)}s`;
-          exif.FocalLength = `${exif.exif.Photo.FocalLength.toFixed(0)}mm`;
-          exif.ISO = exif.exif.Photo.ISOSpeedRatings?.toString() ?? "??";
-        }
-      }
-    }
-
-    let raws: { name: string, path: string }[] = [];
-    if (conf.hideRaws) {
-      const altName = conf.rawStrategy == "replace" ?
-            viewPath.slice(0, -path.extname(viewPath).length) :
-            viewPath;
-
-      raws = (await Promise.all(conf.hideRaws
-            .map(e => altName + e)
-            .map(async f => [ f, await access(path.join(mediaDir, f)).then(() => true, () => false) ] as [ string, boolean ])))
-            .filter(([ , a ]) => a)
-            .map(([ v ]) => ({
-              path: v,
-              name: path.basename(v),
-            }));
-    }
-
     res.render("view", {
       title: viewPath,
-      type: mimeTypeToFileType(mime),
       query: query.toString(),
-      name: items[thisIndex].name,
       style: style === "default" ? (dirConf.defaultStyle === "default" ? conf.defaultStyle : dirConf.defaultStyle) : style,
       fit: fit === "default" ? (dirConf.defaultFit === "default" ? conf.defaultFit : dirConf.defaultFit) : fit,
       domain: req.get("host"),
       url: req.url,
-      base, next, prev, basePath, exif, raws,
+      name, type, base, next, prev, basePath, exif, raws,
+    });
+  });
+
+  app.get(path.join(basePath, "/api/view"), async (req: Request, res: Response) => {
+    const viewPath = req.query["path"] as string;
+    const { name, type, base, next, prev, basePath, exif, raws } = await getStats(viewPath);
+
+    res.json({
+      name, type,
+      base, next, prev, basePath,
+      exif, raws
     });
   });
 }

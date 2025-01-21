@@ -17,6 +17,8 @@ export const basePath = ("/" + (process.env.BASE_PATH ?? "")
       .replace(/\/$/, "")
       .replace(/^\//, "") + "/").replace(/^\/\/$/, "/");
 
+export class FileNotFoundError extends Error {}
+
 const title = process.env.TITLE ?? "Media Browser";
 
 mkdirSync(thumbnailDir, { recursive: true });
@@ -48,6 +50,7 @@ app.set("query parser", (str: string) => {
 });
 
 app.use(connectLiveReload());
+app.use(express.json());
 
 browse(app);
 view(app);
@@ -78,6 +81,11 @@ app.use(path.join(basePath, "/media"), isAllowedMiddleware("/media"), express.st
 app.use(path.join(basePath, "/thumbs"), isAllowedMiddleware("/thumbs"), express.static(thumbnailDir));
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof FileNotFoundError) {
+    res.sendStatus(404);
+    return;
+  }
+
   console.error(err.stack)
   res.status(500).send('Something broke!')
 });
