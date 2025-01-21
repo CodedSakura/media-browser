@@ -94,8 +94,8 @@ export default function (app: Express) {
   app.get(path.join(basePath, "/"), (_req: Request, res: Response) => {
     res.redirect(path.join(basePath, "/browse/"));
   });
-  app.get(path.join(basePath, "/browse/*?"), async (req: Request, res: Response) => {
-    const viewPath = ("/" + (req.params[0] ?? "")).replace(/([^\/])$/, "$1/");
+  app.get(path.join(basePath, "/browse/{*path}"), async (req: Request, res: Response) => {
+    const viewPath = ("/" + path.join(...(req.params.path ?? []))).replace(/([^\/])$/, "$1/");
     let { layout = "default" } = req.query;
 
     if (Array.isArray(layout) && layout.length > 0) {

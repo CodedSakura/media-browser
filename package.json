@@ -7,17 +7,17 @@
   "dependencies": {
     "connect-livereload": "^0.6.1",
     "cors": "^2.8.5",
-    "exif-reader": "^2.0.1",
-    "express": "^4.18.3",
-    "express-handlebars": "^7.1.2",
-    "helmet": "^7.1.0",
+    "exif-reader": "^2.0.2",
+    "express": "^5.0.1",
+    "express-handlebars": "^8.0.1",
+    "helmet": "^8.0.0",
     "livereload": "^0.9.3",
-    "nodemon": "^3.1.0",
-    "qs": "^6.12.0",
-    "sass": "^1.72.0",
-    "sharp": "^0.33.3",
+    "nodemon": "^3.1.9",
+    "qs": "^6.14.0",
+    "sass": "^1.83.4",
+    "sharp": "^0.33.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.7.3"
   },
   "devDependencies": {
     "@types/connect-livereload": "^0",
@@ -29,6 +29,6 @@
   },
   "scripts": {
     "start": "node -r ts-node/register --trace-warnings --unhandled-rejections=strict src/index.ts",
-    "dev": "nodemon src/index.ts -e handlebars,ts,scss,svg,css,js,sass"
+    "dev": "env PORT=8000 nodemon src/index.ts -e handlebars,ts,scss,svg,css,js,sass"
   }
 }

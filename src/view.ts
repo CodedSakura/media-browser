@@ -53,8 +53,8 @@ function mimeTypeToFileType(mime: string): FileType {
 }
 
 export default function (app: Express) {
-  app.get(path.join(basePath, "/view/*"), async (req: Request, res: Response) => {
-    const viewPath = req.params[0];
+  app.get(path.join(basePath, "/view/*path"), async (req: Request, res: Response) => {
+    const viewPath = path.join(...req.params.path);
     let { style = "default", fit = "default" } = req.query;
 
     if (Array.isArray(style) && style.length > 0) {

@@ -1,5 +1,5 @@
 import connectLiveReload from "connect-livereload";
-import express, { Request, Response } from "express";
+import express, { type NextFunction, Request, Response } from "express";
 import { create } from "express-handlebars";
 import { mkdirSync, readFileSync } from "fs";
 import livereload from "livereload";
@@ -52,7 +52,7 @@ app.use(connectLiveReload());
 browse(app);
 view(app);
 
-app.get(path.join(basePath, "*.css"), (req: Request, res: Response) => {
+app.get(path.join(basePath, "*filename.css"), (req: Request, res: Response) => {
   const urlBase = path.dirname(path.relative(path.join(basePath, "/"), req.url));
   const filename = path.basename(req.url, ".css");
   const extLessPath = path.resolve(__dirname, "../public", urlBase, filename);
@@ -76,6 +76,11 @@ app.use(path.join(basePath, "/"), express.static(path.resolve(__dirname, "../pub
 app.use(path.join(basePath, "/media"), isAllowedMiddleware("/media"), express.static(mediaDir));
 
 app.use(path.join(basePath, "/thumbs"), isAllowedMiddleware("/thumbs"), express.static(thumbnailDir));
+
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+});
 
 const listener = app.listen(Number(process.env.PORT ?? 80), () => {
   const address = listener.address()! as AddressInfo;
