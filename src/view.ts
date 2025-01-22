@@ -156,7 +156,7 @@ export default function (app: Express) {
   });
 
   app.get(path.join(basePath, "/api/view"), async (req: Request, res: Response) => {
-    const viewPath = req.query["path"] as string;
+    const viewPath = (req.query["path"] as string).replace(/^\//, "");
     const { name, type, base, next, prev, basePath, exif, raws } = await getStats(viewPath);
 
     res.json({
