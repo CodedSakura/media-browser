@@ -160,9 +160,24 @@ export default function (app: Express) {
     const { name, type, base, next, prev, basePath, exif, raws } = await getStats(viewPath);
 
     res.json({
+      path: viewPath,
       name, type,
       base, next, prev, basePath,
       exif, raws
+    });
+  });
+
+  app.get(path.join(basePath, "/api/view/raw"), async (req: Request, res: Response) => {
+    const viewPath = (req.query["path"] as string).replace(/^\//, "");
+    const { name, type, base, next, prev, basePath, exif, raws, conf, dirConf } = await getStats(viewPath);
+
+    res.render("view-raw", {
+      title: viewPath,
+      fit: dirConf.defaultFit === "default" ? conf.defaultFit : dirConf.defaultFit,
+      name, type,
+      base, next, prev, basePath,
+      exif, raws,
+      layout: null,
     });
   });
 }

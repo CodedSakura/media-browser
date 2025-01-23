@@ -4,7 +4,7 @@ let timer;
 let data;
 let cache = new Map();
 
-function wakeOverlay(time = 500, autoHide = true, isMobile = false) {
+function wakeOverlay(time = 500, autoHide = true, isMobile = null) {
   const scriptOverlay = document.getElementById("script-overlay");
 
   if (timer) clearTimeout(timer);
@@ -15,37 +15,45 @@ function wakeOverlay(time = 500, autoHide = true, isMobile = false) {
     }, time);
   }
 
-  scriptOverlay.querySelectorAll("[data-desktop]").forEach(e => e.style.display = isMobile ? "none" : "");
+  if (isMobile !== null) {
+    scriptOverlay.querySelectorAll("[data-desktop]").forEach(e => e.style.display = isMobile ? "none" : "");
+  }
 
   scriptOverlay.classList.remove("hidden");
 }
 function hideOverlay() {
-  const scriptOverlay = document.getElementById("script-overlay");
-  scriptOverlay.classList.add("hidden");
+  document.getElementById("script-overlay").classList.add("hidden");
+}
+
+function isOverlayShown() {
+  return !document.getElementById("script-overlay").classList.contains("hidden");
 }
 
 function toggleOverlay(...opts) {
-  const scriptOverlay = document.getElementById("script-overlay");
-
-  if (scriptOverlay.classList.contains("hidden")) {
-    wakeOverlay(...opts);
-  } else {
+  if (isOverlayShown()) {
     hideOverlay();
+  } else {
+    wakeOverlay(...opts);
   }
 }
 
 
-function loadNext() {
-  console.log(data);
-  console.log("load", data.next);
+async function loadNext() {
+  if (!data.next) return;
+  data = await fetchPath(data.next);
+  Promise.all([ fetchPath(data.next), fetchPath(data.prev) ]);
+  await showPath(data.path);
 }
 
-function loadPrev() {
-  console.log("load", data.prev);
+async function loadPrev() {
+  if (!data.prev) return;
+  data = await fetchPath(data.prev);
+  Promise.all([ fetchPath(data.next), fetchPath(data.prev) ]);
+  await showPath(data.path);
 }
 
 function goBack() {
-  console.log("back", data.base);
+  window.history.back();
 }
 
 
@@ -54,13 +62,15 @@ function normalizeAngle(angle) {
   return angle % (Math.PI * 2);
 }
 
-function fetchApi(endpoint, params) {
+function fetchApi(endpoint, params, process = r => r.json()) {
   const url = new URL(endpoint, `${window.location.protocol}//${domain}${basePath}api/`);
   Object.entries(params).forEach(([ k, v ]) => url.searchParams.set(k, v));
-  return fetch(url).then(r => r.json());
+  return fetch(url).then(process);
 }
 
 async function fetchPath(path) {
+  if (!path) return null;
+
   if (cache.has(path)) {
     if (cache.get(path).created > Date.now() - cacheExpireTime) {
       return cache.get(path).data;
@@ -73,6 +83,20 @@ async function fetchPath(path) {
   return data;
 }
 
+async function showPath(path) {
+  if (!path) return;
+
+  const html = await fetchApi("view/raw", { path }, r => r.text());
+
+  if (!html) {
+    return;
+  }
+
+  document.getElementById("content").innerHTML = html;
+  window.history.replaceState(null, "", `${basePath}view/${path}`);
+  document.querySelector("#script-overlay > h2").innerText = data.path;
+}
+
 
 window.addEventListener("load", async () => {
   // disable overlay
@@ -83,15 +107,31 @@ window.addEventListener("load", async () => {
   // pre-cache neighbor pages
   Promise.all([ fetchPath(data.next), fetchPath(data.prev) ]);
 
+  document.querySelectorAll("[data-link='next']")
+        .forEach(e => e.addEventListener("click", loadNext));
+  document.querySelectorAll("[data-link='prev']")
+        .forEach(e => e.addEventListener("click", loadPrev));
+
   wakeOverlay(2000);
 });
 
-window.addEventListener("mousemove", e =>
-      wakeOverlay(500, e.target?.dataset?.hover === undefined));
-window.addEventListener("click", () => wakeOverlay(500, false));
+window.addEventListener("mousemove", e => {
+  if (e.movementX === 0 && e.movementY === 0) return;
+  wakeOverlay(1000, e.target?.dataset?.hover === undefined, false)
+});
+window.addEventListener("click", e => {
+  toggleOverlay(500, false);
+}, { passive: false });
 document.documentElement.addEventListener("mouseleave", () => hideOverlay());
 
-window.addEventListener("touch:tap", () => toggleOverlay(500, false, true));
+window.addEventListener("touch:tap", e => {
+  const pos = {
+    x: e.detail.clientX / window.screen.width * 100,
+    y: e.detail.clientY / window.screen.height * 100,
+  };
+  console.log(pos);
+  toggleOverlay(500, false, true)
+});
 window.addEventListener("touch:swipe:left", () => loadNext());
 window.addEventListener("touch:swipe:right", () => loadPrev());
 window.addEventListener("touch:swipe:up", () => goBack());
@@ -138,6 +178,7 @@ const touchData = {
 };
 
 window.addEventListener("touchstart", e => {
+  if (isOverlayShown()) return;
   e.preventDefault();
   if (e.touches.length > 1) {
     touchData.cancel();
@@ -148,6 +189,7 @@ window.addEventListener("touchstart", e => {
 }, { passive: false });
 
 window.addEventListener("touchmove", e => {
+  if (isOverlayShown()) return;
   e.preventDefault();
   if (touchData.start) {
     touchData.pos = e.touches[0];
@@ -155,11 +197,13 @@ window.addEventListener("touchmove", e => {
 }, { passive: false });
 
 window.addEventListener("touchend", e => {
+  if (isOverlayShown()) return;
   e.preventDefault();
   touchData.end();
 }, { passive: false });
 
 window.addEventListener("touchcancel", e => {
+  if (isOverlayShown()) return;
   e.preventDefault();
   touchData.cancel();
 }, { passive: false });

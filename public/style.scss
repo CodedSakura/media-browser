@@ -156,13 +156,18 @@ a {
     max-width: 100%;
   }
 
-  > img.fit-- {
-    &h {
-      max-width: 100%;
-    }
+  > img {
+    aspect-ratio: auto;
+    object-fit: contain;
 
-    &v {
-      max-height: 100svh;
+    &.fit-- {
+      &h {
+        max-width: 100%;
+      }
+
+      &v {
+        max-height: 100svh;
+      }
     }
   }
 
@@ -279,6 +284,21 @@ a {
 
     * {
       transition: transform 200ms ease;
+    }
+
+    button {
+      background: #eee;
+      color: #000;
+      border: none;
+      outline: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      box-shadow: 0 0 8px #0008;
+
+      &:hover {
+        background: #aaa;
+      }
     }
 
     &.hidden {

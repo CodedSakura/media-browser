@@ -59,12 +59,10 @@
 <div class="nav-overlay hidden" id="script-overlay">
     <h2 data-move="up" data-hover>{{title}}</h2>
     <div class="pos pos--left" data-move="left">
-{{!--         <button data-link="prev" data-desktop data-hover>&lt;</button> --}}
-        {{#if prev}}<a href="{{basePath}}view{{prev}}?{{query}}" title="previous" data-desktop data-hover>&lt;</a>{{/if}}
+        <button data-link="prev" data-desktop data-hover>&lt;</button>
     </div>
     <div class="pos pos--right" data-move="right">
-{{!--         <button data-link="next" data-desktop data-hover>&gt;</button> --}}
-        {{#if next}}<a href="{{basePath}}view{{next}}?{{query}}" title="next" data-desktop data-hover>&gt;</a>{{/if}}
+        <button data-link="next" data-desktop data-hover>&gt;</button>
     </div>
 </div>
 <script src="{{basePath}}view.js"></script>
