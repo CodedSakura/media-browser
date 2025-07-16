@@ -1,0 +1,9 @@
+{
+  "mode": "blacklist",
+  "hideRaws": [
+    ".NEF",
+    ".xmp",
+    ".PNG.xmp",
+    ".NEF.xmp"
+  ]
+}

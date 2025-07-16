@@ -1,0 +1,15 @@
+services:
+  media-browser:
+    image: node:20
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app/
+      - ./media:/media:ro
+    environment:
+      MEDIA_DIR: /media
+      PORT: 8000
+      BASE_PATH: /
+    ports:
+      - "8000:8000"
+    entrypoint: [ "tail", "-f", "/dev/null" ]

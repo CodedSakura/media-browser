@@ -3,6 +3,7 @@ import express, { type NextFunction, Request, Response } from "express";
 import { create } from "express-handlebars";
 import { mkdirSync, readFileSync } from "fs";
 import livereload from "livereload";
+import morgan from "morgan";
 import fs from "node:fs";
 import type { AddressInfo } from "node:net";
 import path from "node:path";
@@ -20,6 +21,7 @@ export const basePath = ("/" + (process.env.BASE_PATH ?? "")
 export class FileNotFoundError extends Error {}
 
 const title = process.env.TITLE ?? "Media Browser";
+const logging = process.env.LOGGING === "true";
 
 mkdirSync(thumbnailDir, { recursive: true });
 
@@ -52,6 +54,10 @@ app.set("query parser", (str: string) => {
 
 app.use(connectLiveReload());
 app.use(express.json());
+
+if (logging) {
+  app.use(morgan("common"));
+}
 
 browse(app);
 view(app);
