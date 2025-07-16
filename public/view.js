@@ -136,6 +136,18 @@ window.addEventListener("touch:swipe:left", () => loadNext());
 window.addEventListener("touch:swipe:right", () => loadPrev());
 window.addEventListener("touch:swipe:up", () => goBack());
 
+window.addEventListener("keydown", e => {
+  if (e.code === "ArrowLeft") {
+    return loadPrev();
+  }
+  if (e.code === "ArrowRight") {
+    return loadNext();
+  }
+  if (e.code === "Backspace") {
+    return goBack();
+  }
+});
+
 
 const touchData = {
   thresholds: {
