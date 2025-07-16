@@ -4,7 +4,7 @@ import { lstat, mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { readConf, readDirConf } from "./conf";
-import { basePath, mediaDir, thumbnailDir } from "./index";
+import { basePath, logging, mediaDir, thumbnailDir } from "./index";
 
 export interface File {
   name: string,
@@ -68,20 +68,32 @@ export const isAllowedMiddleware = (mediaPath: string): RequestHandler => {
 
     const conf = await readConf();
     const dirConf = await readDirConf(viewPath);
-    if (conf.whitelist && conf.whitelist.length > 0 && !conf.whitelist.some(p => p.startsWith(viewPath))) {
+    if (conf.mode === "whitelist" && conf.whitelist && conf.whitelist.length > 0 && !conf.whitelist.some(p => p.startsWith(viewPath))) {
+      if (logging) {
+        console.log(`tried to access a globally non-whitelisted directory or file (${viewPath})`);
+      }
       res.sendStatus(404);
       return;
     }
 
     if (dirConf.hide) {
+      if (logging) {
+        console.log(`tried to access a hidden file (${viewPath})`);
+      }
       res.sendStatus(404);
       return;
     }
     if (dirConf.mode === "whitelist" && !dirConf.list.includes(name)) {
+      if (logging) {
+        console.log(`tried to access a non-whitelisted file (${viewPath})`);
+      }
       res.sendStatus(404);
       return;
     }
     if (dirConf.mode === "blacklist" && dirConf.list.includes(name)) {
+      if (logging) {
+        console.log(`tried to access a blacklisted file (${viewPath})`);
+      }
       res.sendStatus(404);
       return;
     }

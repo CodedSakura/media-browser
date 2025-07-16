@@ -17,11 +17,11 @@ export const thumbnailDir = path.resolve(__dirname, process.env.THUMB_DIR ?? "..
 export const basePath = ("/" + (process.env.BASE_PATH ?? "")
       .replace(/\/$/, "")
       .replace(/^\//, "") + "/").replace(/^\/\/$/, "/");
+export const logging = process.env.LOGGING === "true";
 
 export class FileNotFoundError extends Error {}
 
 const title = process.env.TITLE ?? "Media Browser";
-const logging = process.env.LOGGING === "true";
 
 mkdirSync(thumbnailDir, { recursive: true });
 
