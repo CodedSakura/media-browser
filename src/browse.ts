@@ -63,7 +63,7 @@ export async function getFileList(viewPath: string): Promise<File[]> {
 
 export const isAllowedMiddleware = (mediaPath: string): RequestHandler => {
   return async (req, res, next) => {
-    const viewPath = path.sep + path.dirname(path.relative(basePath, req.path));
+    const viewPath = path.sep + path.dirname(path.relative(basePath, decodeURI(req.path)));
     const name = path.basename(req.path);
 
     const conf = await readConf();
